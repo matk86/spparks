@@ -47,13 +47,13 @@ class AppErbium : public AppLattice {
   int *esites;
   int *echeck;
 
-  int none,ntwo,nthree;
-  double *srate,*drate,*trate;
-  double *spropensity,*dpropensity,*tpropensity;
-  int *stype,**dtype,**ttype;
-  int *sinput,**dinput,**tinput;
-  int *soutput,**doutput,**toutput;
-  int *scount,*dcount,*tcount;
+  int none,ntwo,nthree, neight;
+  double *srate,*drate,*trate,*erate;
+  double *spropensity,*dpropensity,*tpropensity,*epropensity;;
+  int *stype,**dtype,**ttype,**etype;
+  int *sinput,**dinput,**tinput,**einput;
+  int *soutput,**doutput,**toutput,**eoutput;
+  int *scount,*dcount,*tcount,*ecount;
 
   struct Event {           // one event for an owned site
     int style;             // reaction style = SINGLE,DOUBLE,TRIPLE

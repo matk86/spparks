@@ -24,7 +24,7 @@
 using namespace SPPARKS_NS;
 
 enum{NOOP,FCC,OCTA,TETRA};
-enum{ZERO,ERBIUM,HYDROGEN,HELIUM,VACANCY};      // same as DiagErbium
+enum{ZERO,ERBIUM,PALLADIUM, GOLD,HYDROGEN,HELIUM,VACANCY};      // same as DiagErbium
 
 #define DELTAEVENT 100000
 
@@ -53,13 +53,14 @@ AppErbium::AppErbium(SPPARKS *spk, int narg, char **arg) :
 
   // reaction lists
 
-  none = ntwo = nthree = 0;
-  srate = drate = trate = NULL;
-  spropensity = dpropensity = tpropensity = NULL;
+  none = ntwo = nthree = neight =0;
+  srate = drate = trate = erate = NULL;
+  spropensity = dpropensity = tpropensity = epropensity = NULL;
   stype = sinput = soutput = NULL;
   dtype = dinput = doutput = NULL;
   ttype = tinput = toutput = NULL;
-  scount = dcount = tcount = NULL;
+  etype = einput = eoutput = NULL;
+  scount = dcount = tcount = ecount = NULL;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -74,21 +75,27 @@ AppErbium::~AppErbium()
   memory->destroy(srate);
   memory->destroy(drate);
   memory->destroy(trate);
+  memory->destroy(erate);
   memory->destroy(spropensity);
   memory->destroy(dpropensity);
   memory->destroy(tpropensity);
+  memory->destroy(epropensity);
   memory->destroy(stype);
   memory->destroy(sinput);
   memory->destroy(soutput);
   memory->destroy(dtype);
   memory->destroy(dinput);
   memory->destroy(doutput);
+  memory->destroy(etype);
+  memory->destroy(einput);
+  memory->destroy(eoutput);
   memory->destroy(ttype);
   memory->destroy(tinput);
   memory->destroy(toutput);
   memory->destroy(scount);
   memory->destroy(dcount);
   memory->destroy(tcount);
+  memory->destroy(ecount);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -123,7 +130,8 @@ void AppErbium::input_app(char *command, int narg, char **arg)
 
       none++;
       
-    } else if (rstyle == 2) {
+    } 
+else if (rstyle == 2) {
       if (narg != 8) error->all(FLERR,"Illegal event command");
 
       if (strcmp(arg[1],"fcc") == 0) dtype[ntwo][0] = FCC;
@@ -159,6 +167,163 @@ void AppErbium::input_app(char *command, int narg, char **arg)
       else error->all(FLERR,"Illegal event command");
 
       ntwo++;
+
+    }
+
+else if (rstyle == 8) {
+      if (narg != 26) error->all(FLERR,"Illegal event command");
+
+      if (strcmp(arg[1],"fcc") == 0) etype[neight][0] = FCC;
+      else if (strcmp(arg[1],"oct") == 0) etype[neight][0] = OCTA;
+      else if (strcmp(arg[1],"tet") == 0) etype[neight][0] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[2],"fcc") == 0) etype[neight][1] = FCC;
+      else if (strcmp(arg[2],"oct") == 0) etype[neight][1] = OCTA;
+      else if (strcmp(arg[2],"tet") == 0) etype[neight][1] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[3],"fcc") == 0) etype[neight][2] = FCC;
+      else if (strcmp(arg[3],"oct") == 0) etype[neight][2] = OCTA;
+      else if (strcmp(arg[3],"tet") == 0) etype[neight][2] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[4],"fcc") == 0) etype[neight][3] = FCC;
+      else if (strcmp(arg[4],"oct") == 0) etype[neight][3] = OCTA;
+      else if (strcmp(arg[4],"tet") == 0) etype[neight][3] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[5],"fcc") == 0) etype[neight][4] = FCC;
+      else if (strcmp(arg[5],"oct") == 0) etype[neight][4] = OCTA;
+      else if (strcmp(arg[5],"tet") == 0) etype[neight][4] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[6],"fcc") == 0) etype[neight][5] = FCC;
+      else if (strcmp(arg[6],"oct") == 0) etype[neight][5] = OCTA;
+      else if (strcmp(arg[6],"tet") == 0) etype[neight][5] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[7],"fcc") == 0) etype[neight][6] = FCC;
+      else if (strcmp(arg[7],"oct") == 0) etype[neight][6] = OCTA;
+      else if (strcmp(arg[7],"tet") == 0) etype[neight][6] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[8],"fcc") == 0) etype[neight][7] = FCC;
+      else if (strcmp(arg[8],"oct") == 0) etype[neight][7] = OCTA;
+      else if (strcmp(arg[8],"tet") == 0) etype[neight][7] = TETRA;
+      else error->all(FLERR,"Illegal event command");
+
+      if (strcmp(arg[9],"er") == 0) einput[neight][0] = ERBIUM;
+      else if (strcmp(arg[9],"pd") == 0) einput[neight][0] = PALLADIUM;
+      else if (strcmp(arg[9],"h") == 0) einput[neight][0] = HYDROGEN;
+      else if (strcmp(arg[9],"he") == 0) einput[neight][0] = HELIUM;
+      else if (strcmp(arg[9],"au") == 0) einput[neight][0] = GOLD;
+      else if (strcmp(arg[9],"vac") == 0) einput[neight][0] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[10],"er") == 0) einput[neight][1] = ERBIUM;
+      else if (strcmp(arg[10],"pd") == 0) einput[neight][1] = PALLADIUM;
+      else if (strcmp(arg[10],"h") == 0) einput[neight][1] = HYDROGEN;
+      else if (strcmp(arg[10],"he") == 0) einput[neight][1] = HELIUM;
+      else if (strcmp(arg[10],"au") == 0) einput[neight][1] = GOLD;
+      else if (strcmp(arg[10],"vac") == 0) einput[neight][1] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[11],"er") == 0) einput[neight][2] = ERBIUM;
+      else if (strcmp(arg[11],"pd") == 0) einput[neight][2] = PALLADIUM;
+      else if (strcmp(arg[11],"h") == 0) einput[neight][2] = HYDROGEN;
+      else if (strcmp(arg[11],"he") == 0) einput[neight][2] = HELIUM;
+      else if (strcmp(arg[11],"au") == 0) einput[neight][2] = GOLD;
+      else if (strcmp(arg[11],"vac") == 0) einput[neight][2] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[12],"er") == 0) einput[neight][3] = ERBIUM;
+      else if (strcmp(arg[12],"pd") == 0) einput[neight][3] = PALLADIUM;
+      else if (strcmp(arg[12],"h") == 0) einput[neight][3] = HYDROGEN;
+      else if (strcmp(arg[12],"he") == 0) einput[neight][3] = HELIUM;
+      else if (strcmp(arg[12],"au") == 0) einput[neight][3] = GOLD;
+      else if (strcmp(arg[12],"vac") == 0) einput[neight][3] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[13],"er") == 0) einput[neight][4] = ERBIUM;
+      else if (strcmp(arg[13],"pd") == 0) einput[neight][4] = PALLADIUM;
+      else if (strcmp(arg[13],"h") == 0) einput[neight][4] = HYDROGEN;
+      else if (strcmp(arg[13],"he") == 0) einput[neight][4] = HELIUM;
+      else if (strcmp(arg[13],"au") == 0) einput[neight][4] = GOLD;
+      else if (strcmp(arg[13],"vac") == 0) einput[neight][4] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[14],"er") == 0) einput[neight][5] = ERBIUM;
+      else if (strcmp(arg[14],"pd") == 0) einput[neight][5] = PALLADIUM;
+      else if (strcmp(arg[14],"h") == 0) einput[neight][5] = HYDROGEN;
+      else if (strcmp(arg[14],"he") == 0) einput[neight][5] = HELIUM;
+      else if (strcmp(arg[14],"au") == 0) einput[neight][5] = GOLD;
+      else if (strcmp(arg[14],"vac") == 0) einput[neight][5] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[15],"er") == 0) einput[neight][6] = ERBIUM;
+      else if (strcmp(arg[15],"pd") == 0) einput[neight][6] = PALLADIUM;
+      else if (strcmp(arg[15],"h") == 0) einput[neight][6] = HYDROGEN;
+      else if (strcmp(arg[15],"he") == 0) einput[neight][6] = HELIUM;
+      else if (strcmp(arg[15],"au") == 0) einput[neight][6] = GOLD;
+      else if (strcmp(arg[15],"vac") == 0) einput[neight][6] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[16],"er") == 0) einput[neight][7] = ERBIUM;
+      else if (strcmp(arg[16],"pd") == 0) einput[neight][7] = PALLADIUM;
+      else if (strcmp(arg[16],"h") == 0) einput[neight][7] = HYDROGEN;
+      else if (strcmp(arg[16],"he") == 0) einput[neight][7] = HELIUM;
+      else if (strcmp(arg[16],"au") == 0) einput[neight][7] = GOLD;
+      else if (strcmp(arg[16],"vac") == 0) einput[neight][7] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+
+
+      erate[neight] = atof(arg[17]);
+
+      if (strcmp(arg[18],"er") == 0) eoutput[neight][0] = ERBIUM;
+      else if (strcmp(arg[18],"pd") == 0) eoutput[neight][0] = PALLADIUM;
+      else if (strcmp(arg[18],"h") == 0) eoutput[neight][0] = HYDROGEN;
+      else if (strcmp(arg[18],"he") == 0) eoutput[neight][0] = HELIUM;
+      else if (strcmp(arg[18],"au") == 0) eoutput[neight][0] = GOLD;
+      else if (strcmp(arg[18],"vac") == 0) eoutput[neight][0] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[19],"er") == 0) eoutput[neight][1] = ERBIUM;
+      else if (strcmp(arg[19],"pd") == 0) eoutput[neight][1] = PALLADIUM;
+      else if (strcmp(arg[19],"h") == 0) eoutput[neight][1] = HYDROGEN;
+      else if (strcmp(arg[19],"he") == 0) eoutput[neight][1] = HELIUM;
+      else if (strcmp(arg[19],"au") == 0) eoutput[neight][1] = GOLD;
+      else if (strcmp(arg[19],"vac") == 0) eoutput[neight][1] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[20],"er") == 0) eoutput[neight][2] = ERBIUM;
+      else if (strcmp(arg[20],"pd") == 0) eoutput[neight][2] = PALLADIUM;
+      else if (strcmp(arg[20],"h") == 0) eoutput[neight][2] = HYDROGEN;
+      else if (strcmp(arg[20],"he") == 0) eoutput[neight][2] = HELIUM;
+      else if (strcmp(arg[20],"au") == 0) eoutput[neight][2] = GOLD;
+      else if (strcmp(arg[20],"vac") == 0) eoutput[neight][2] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[21],"er") == 0) eoutput[neight][3] = ERBIUM;
+      else if (strcmp(arg[21],"pd") == 0) eoutput[neight][3] = PALLADIUM;
+      else if (strcmp(arg[21],"h") == 0) eoutput[neight][3] = HYDROGEN;
+      else if (strcmp(arg[21],"he") == 0) eoutput[neight][3] = HELIUM;
+      else if (strcmp(arg[21],"au") == 0) eoutput[neight][3] = GOLD;
+      else if (strcmp(arg[21],"vac") == 0) eoutput[neight][3] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[22],"er") == 0) eoutput[neight][4] = ERBIUM;
+      else if (strcmp(arg[22],"pd") == 0) eoutput[neight][4] = PALLADIUM;
+      else if (strcmp(arg[22],"h") == 0) eoutput[neight][4] = HYDROGEN;
+      else if (strcmp(arg[22],"he") == 0) eoutput[neight][4] = HELIUM;
+      else if (strcmp(arg[22],"au") == 0) eoutput[neight][4] = GOLD;
+      else if (strcmp(arg[2],"vac") == 0) eoutput[neight][4] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[23],"er") == 0) eoutput[neight][5] = ERBIUM;
+      else if (strcmp(arg[23],"pd") == 0) eoutput[neight][5] = PALLADIUM;
+      else if (strcmp(arg[23],"h") == 0) eoutput[neight][5] = HYDROGEN;
+      else if (strcmp(arg[23],"he") == 0) eoutput[neight][5] = HELIUM;
+      else if (strcmp(arg[23],"au") == 0) eoutput[neight][5] = GOLD;
+      else if (strcmp(arg[23],"vac") == 0) eoutput[neight][5] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[24],"er") == 0) eoutput[neight][6] = ERBIUM;
+      else if (strcmp(arg[24],"pd") == 0) eoutput[neight][6] = PALLADIUM;
+      else if (strcmp(arg[24],"h") == 0) eoutput[neight][6] = HYDROGEN;
+      else if (strcmp(arg[24],"he") == 0) eoutput[neight][6] = HELIUM;
+      else if (strcmp(arg[24],"au") == 0) eoutput[neight][6] = GOLD;
+      else if (strcmp(arg[24],"vac") == 0) eoutput[neight][6] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+      if (strcmp(arg[25],"er") == 0) eoutput[neight][7] = ERBIUM;
+      else if (strcmp(arg[25],"pd") == 0) eoutput[neight][7] = PALLADIUM;
+      else if (strcmp(arg[25],"h") == 0) eoutput[neight][7] = HYDROGEN;
+      else if (strcmp(arg[25],"he") == 0) eoutput[neight][7] = HELIUM;
+      else if (strcmp(arg[25],"au") == 0) eoutput[neight][7] = GOLD;
+      else if (strcmp(arg[25],"vac") == 0) eoutput[neight][7] = VACANCY;
+      else error->all(FLERR,"Illegal event command");
+
+      neight++;
 
     } else if (rstyle == 3) {
       if (narg != 11) error->all(FLERR,"Illegal event command");
@@ -281,6 +446,11 @@ void AppErbium::setup_app()
     dpropensity[m] = exp(-drate[m]/temperature);
     dcount[m] = 0;
   }
+  for (int m = 0; m < neight; m++) {
+    epropensity[m] = exp(-erate[m]/temperature);
+    ecount[m] = 0;
+  }
+
   for (int m = 0; m < nthree; m++) {
     tpropensity[m] = exp(-trate[m]/temperature);
     tcount[m] = 0;
@@ -336,6 +506,61 @@ double AppErbium::site_propensity(int i)
       proball += dpropensity[m];
     }
   }
+
+  // eight-site events, special case of two-site events
+  //  std::cout<< xyz[i][0]<<"\n";
+  for (m = 0; m < neight; m++) {
+
+    for (int jj = 0; jj < numneigh[i]; jj++) {
+
+      int jk, found = 0;
+
+      j = neighbor[i][jj];
+
+      if (type[i] != etype[m][6] || element[i] != einput[m][6]) continue;
+      if (type[j] != etype[m][7] || element[j] != einput[m][7]) continue;
+
+      int inflag = 0;
+
+      for (int kk = 0; kk < numneigh[i]; kk++) {
+
+              k = neighbor[i][kk];
+
+              if (type[k] == etype[m][0] && element[k] == einput[m][0]) {inflag++;continue;}
+              if (type[k] == etype[m][1] && element[k] == einput[m][1]) {inflag++;continue;}
+              if (type[k] == etype[m][2] && element[k] == einput[m][2]) {inflag++;continue;}
+              if (type[k] == etype[m][3] && element[k] == einput[m][3]) {inflag++;continue;}
+              if (type[k] == etype[m][4] && element[k] == einput[m][4]) {inflag++;continue;}
+              if (type[k] == etype[m][5] && element[k] == einput[m][5]) {inflag++;continue;}
+      }
+
+      int outflag = 0;
+
+      for (int kk = 0; kk < numneigh[j]; kk++) {
+
+              k = neighbor[j][kk];
+
+              if (type[k] == etype[m][0] && element[k] == eoutput[m][0]) {outflag++;continue;}
+              if (type[k] == etype[m][1] && element[k] == eoutput[m][1]) {outflag++;continue;}
+              if (type[k] == etype[m][2] && element[k] == eoutput[m][2]) {outflag++;continue;}
+              if (type[k] == etype[m][3] && element[k] == eoutput[m][3]) {outflag++;continue;}
+              if (type[k] == etype[m][4] && element[k] == eoutput[m][4]) {outflag++;continue;}
+              if (type[k] == etype[m][5] && element[k] == eoutput[m][5]) {outflag++;continue;}
+      }
+
+      if (inflag == 6 && outflag == 6 ) {
+
+          add_event(i, 8, m, epropensity[m], j, -1);
+
+          proball += epropensity[m];
+
+      }
+
+
+    }//end of loop over j
+
+  }//end of loop over m
+
 
   // triple-site events
 
@@ -393,10 +618,16 @@ void AppErbium::site_event(int i, class RandomPark *random)
   if (rstyle == 1) {
     element[i] = soutput[which];
     scount[which]++;
-  } else if (rstyle == 2) {
+  }
+else if (rstyle == 2) {
     element[i] = doutput[which][0];
     element[j] = doutput[which][1];
     dcount[which]++;
+  }  
+else if (rstyle == 8) {
+    element[i] = eoutput[which][6];
+    element[j] = eoutput[which][7];
+    ecount[which]++;
   } else {
     element[i] = toutput[which][0];
     element[j] = toutput[which][1];
@@ -522,7 +753,8 @@ void AppErbium::grow_reactions(int rstyle)
     memory->grow(soutput,n,"app/erbium:soutput");
     memory->grow(scount,n,"app/erbium:scount");
 
-  } else if (rstyle == 2) {
+  }
+else if (rstyle == 2) {
     int n = ntwo + 1;
     memory->grow(drate,n,"app/erbium:drate");
     memory->grow(dpropensity,n,"app/erbium:dpropensity");
@@ -530,6 +762,16 @@ void AppErbium::grow_reactions(int rstyle)
     dinput = memory->grow(dinput,n,2,"app/erbium:dinput");
     doutput = memory->grow(doutput,n,2,"app/erbium:doutput");
     memory->grow(dcount,n,"app/erbium:dcount");
+
+  } 
+else if (rstyle == 8) {
+    int n = neight + 1;
+    memory->grow(erate,n,"app/erbium:erate");
+    memory->grow(epropensity,n,"app/erbium:epropensity");
+    etype = memory->grow(etype,n,8,"app/erbium:etype");
+    einput = memory->grow(einput,n,8,"app/erbium:einput");
+    eoutput = memory->grow(eoutput,n,8,"app/erbium:eoutput");
+    memory->grow(ecount,8,"app/erbium:ecount");
 
   } else if (rstyle == 3) {
     int n = nthree + 1;

@@ -24,8 +24,8 @@
 
 using namespace SPPARKS_NS;
 
-enum{ZERO,ERBIUM,HYDROGEN,HELIUM,VACANCY};   // same as AppErbium
-enum{ER,H,HE,VAC,EVENTS,ONE,TWO,THREE};
+enum{ZERO, ERBIUM, PALLADIUM, GOLD, HYDROGEN, HELIUM, VACANCY};   // same as AppErbium
+enum{ER, PD, AU, H, HE, VAC, EVENTS, ONE, TWO, THREE, EIGHT};
 
 /* ---------------------------------------------------------------------- */
 
@@ -77,10 +77,13 @@ void DiagErbium::init()
 
   int none = apperbium->none;
   int ntwo = apperbium->ntwo;
+  int neight = apperbium->neight;
   int nthree = apperbium->nthree;
 
   for (int i = 0; i < nlist; i++) {
     if (strcmp(list[i],"er") == 0) which[i] = ER;
+    else if (strcmp(list[i],"pd") == 0) which[i] = PD;
+    else if (strcmp(list[i],"au") == 0) which[i] = AU;
     else if (strcmp(list[i],"h") == 0) which[i] = H;
     else if (strcmp(list[i],"he") == 0) which[i] = HE;
     else if (strcmp(list[i],"vac") == 0) which[i] = VAC;
@@ -103,12 +106,20 @@ void DiagErbium::init()
       if (n < 1 || n > nthree) 
 	error->all(FLERR,"Invalid value setting in diag_style erbium");
       index[i] = n - 1;
-    } else error->all(FLERR,"Invalid value setting in diag_style erbium");
+    } 
+else if (list[i][0] == 'e') {
+      which[i] = EIGHT;
+      int n = atoi(&list[i][1]);
+      if (n < 1 || n > neight) 
+	error->all(FLERR,"Invalid value setting in diag_style erbium");
+      index[i] = n - 1;
+    }
+else error->all(FLERR,"Invalid value setting in diag_style erbium");
   }
 
   siteflag = 0;
   for (int i = 0; i < nlist; i++)
-    if (which[i] == ER || which[i] == H || which[i] == HE || which[i] == VAC)
+    if (which[i] == ER || which[i] == PD || which[i] == AU ||which[i] == H || which[i] == HE || which[i] == VAC)
       siteflag = 1;
 
   for (int i = 0; i < nlist; i++) ivector[i] = 0;
@@ -121,7 +132,7 @@ void DiagErbium::compute()
   int sites[5],ivalue;
 
   if (siteflag) {
-    sites[ERBIUM] = sites[HYDROGEN] = sites[HELIUM] = sites[VACANCY] = 0;
+    sites[ERBIUM] = sites[PALLADIUM] = sites[GOLD] =sites[HYDROGEN] = sites[HELIUM] = sites[VACANCY] = 0;
     int *element = apperbium->element;
     int nlocal = apperbium->nlocal;
     for (int i = 0; i < nlocal; i++) sites[element[i]]++;
@@ -129,6 +140,8 @@ void DiagErbium::compute()
 
   for (int i = 0; i < nlist; i++) {
     if (which[i] == ER) ivalue = sites[ERBIUM];
+    else if (which[i] == PD) ivalue = sites[PALLADIUM];
+    else if (which[i] == AU) ivalue = sites[GOLD];
     else if (which[i] == H) ivalue = sites[HYDROGEN];
     else if (which[i] == HE) ivalue = sites[HELIUM];
     else if (which[i] == VAC) ivalue = sites[VACANCY];
@@ -136,6 +149,7 @@ void DiagErbium::compute()
     else if (which[i] == ONE) ivalue = apperbium->scount[index[i]];
     else if (which[i] == TWO) ivalue = apperbium->dcount[index[i]];
     else if (which[i] == THREE) ivalue = apperbium->tcount[index[i]];
+    else if (which[i] == EIGHT) ivalue = apperbium->ecount[index[i]];
     
     MPI_Allreduce(&ivalue,&ivector[i],1,MPI_INT,MPI_SUM,world);
   }
